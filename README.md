@@ -13,5 +13,6 @@ PATH.
 
 ```sh
 bundle
-pkill nginx; nginx -p ``pwd``/examples/ -c nginx.conf; bundle exec rspec spec/
+pkill nginx; nginx -p `pwd`/examples/ -c nginx.conf; bundle exec rspec spec/
+busted -p spec.lua
 ```

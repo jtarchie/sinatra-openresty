@@ -1,3 +1,3 @@
 return({
-  app=require("app"),
+  app=require("sinatra/app"),
 })

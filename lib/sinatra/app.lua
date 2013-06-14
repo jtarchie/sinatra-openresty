@@ -1,10 +1,14 @@
 local table, _ = table, require("underscore")
-local App, Request, Response, halt = {}, require("request"), require("response"), error
+local App, Request, Response = {}, require("sinatra/request"), require("sinatra/response")
 
 App.__index = App
 
 function log(...)
   ngx.log(ngx.ERR, "SINATRA: ", ...)
+end
+
+function halt(...)
+  error(Response:new(...))
 end
 
 function App:new(route_table)
@@ -56,9 +60,9 @@ end
 function App:apply_routes(request)
   local routes = self.routes[request.request_method]
   for index, route in ipairs(routes) do
-    local response = process_route(request, route)
-    if response then
-      halt(Response:new(200, response))
+    local response = {process_route(request, route)}
+    if #response > 0 then
+      halt(response)
     end
   end
 end

@@ -1,6 +1,7 @@
 local sinatra = require('sinatra');
 
 local app = sinatra.app:new()
+
 app:get("/", function()
   return "Hello, World"
 end)
