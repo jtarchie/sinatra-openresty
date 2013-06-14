@@ -8,7 +8,8 @@ describe("Response", function()
   before_each(function()
     ngx = {
       say=function()end,
-      header={}
+      header={},
+      status=nil
     }
   end)
 
@@ -31,6 +32,12 @@ describe("Response", function()
       local response = Response:new(200, {["Content-Type"]="text/plain"}, " ")
       response:send()
       assert.same(ngx.header, {["Content-Type"]="text/plain"})
+    end)
+
+    it("sets the status code", function()
+      local response = Response:new(500)
+      response:send()
+      assert.same(ngx.status, 500)
     end)
   end)
 

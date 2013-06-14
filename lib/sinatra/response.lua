@@ -32,6 +32,7 @@ function Response:new(...)
 end
 
 function Response:send()
+  ngx.status = self.status
   for name, value in pairs(self.headers) do
     ngx.header[name] = value
   end
