@@ -6,29 +6,34 @@ ngx = {}
 
 describe("Request", function()
   before_each(function()
-    ngx = {var={}}
+    ngx = {
+      var={
+        uri="/path"
+      },
+      req={
+        get_method=function() return "GET" end
+      }
+    }
   end)
 
   it("returns the request method", function()
-    ngx.var = {request_method="GET"}
     local request = Request:new()
     assert.same(request.request_method, "GET")
   end)
 
   it("returns the current path", function()
-    ngx.var = {uri="/path"}
     local request = Request:new()
     assert.same(request.current_path, "/path")
   end)
 
   describe("form paramteres from #params", function()
     before_each(function()
-      ngx.req = {get_uri_args=function()
+      ngx.req.get_uri_args=function()
         return({
           a='1',
           b='2'
         }) 
-      end}
+      end
     end)
 
     it("returns a hash from query string", function()

@@ -11,10 +11,10 @@ function MockRequest:request(verb, request_path, headers)
   ngx={
     log=function(...) print(...) end,
     var={
-      request_method=verb,
       uri=request_path
     },
     req={
+      get_method=function() return verb end,
       get_uri_args=function() end
     },
     say=function() end

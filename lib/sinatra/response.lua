@@ -25,6 +25,9 @@ end
 
 function Response:new(...)
   local status, headers, body = parse_arguments(...)
+  if(ngx.req.get_method() == "HEAD") then
+    body = ""
+  end
   return setmetatable({
     status=status,
     body=body,

@@ -8,7 +8,7 @@ function log(...)
 end
 
 function halt(...)
-  error(Response:new(unpack(...)))
+  error(Response:new(...))
 end
 
 function App:new()
@@ -20,6 +20,7 @@ end
 
 function App:delete(path, callback) self:set_route('DELETE', path, callback) end
 function App:get(path, callback) self:set_route('GET', path, callback) end
+function App:head(path, callback) self:set_route('HEAD', path, callback) end
 function App:link(path, callback) self:set_route('LINK', path, callback) end
 function App:options(path, callback) self:set_route('OPTIONS', path, callback) end
 function App:patch(path, callback) self:set_route('PATCH', path, callback) end
@@ -58,18 +59,17 @@ function process_route(request, route)
       params=_.extend(request:params(), matched_keys)
     }, { __index = _G})
     local callback = setfenv(route.callback, route_env)
-    return callback(unpack(matches))
+    halt(callback(unpack(matches)))
   end
 end
 
 function App:apply_routes(request)
   local routes = self.routes[request.request_method]
   for index, route in ipairs(routes) do
-    local response = {process_route(request, route)}
-    if #response > 0 then
-      halt(response)
-    end
+    process_route(request, route)
   end
+
+  halt(404)
 end
 
 function process_request(app)

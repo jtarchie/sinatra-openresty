@@ -3,7 +3,7 @@ Request.__index = Request
 
 function Request:new()
   return setmetatable({
-    request_method=ngx.var.request_method,
+    request_method=ngx.req.get_method(),
     current_path=ngx.var.uri
   }, self)
 end

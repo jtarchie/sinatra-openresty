@@ -9,7 +9,10 @@ describe("Response", function()
     ngx = {
       say=function()end,
       header={},
-      status=nil
+      status=nil,
+      req={
+        get_method=function() end
+      }
     }
   end)
 
