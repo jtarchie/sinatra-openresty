@@ -1,7 +1,9 @@
 package.path = './spec/?.lua;./lib/?.lua;'..package.path
 require("spec_helper")
 
-local App = require("sinatra/app")
+local Route = require("sinatra/route")
 
-describe("App", function()
+describe("Route", function()
+  
 end)
+

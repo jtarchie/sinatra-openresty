@@ -8,19 +8,24 @@ function log(...)
 end
 
 function halt(...)
-  error(Response:new(...))
+  error(Response:new(unpack(...)))
 end
 
-function App:new(route_table)
+function App:new()
   local self = setmetatable({
     routes={}
   }, self)
   return self
 end
 
-function App:get(path, callback)
-  self:set_route('GET', path, callback)
-end
+function App:delete(path, callback) self:set_route('DELETE', path, callback) end
+function App:get(path, callback) self:set_route('GET', path, callback) end
+function App:link(path, callback) self:set_route('LINK', path, callback) end
+function App:options(path, callback) self:set_route('OPTIONS', path, callback) end
+function App:patch(path, callback) self:set_route('PATCH', path, callback) end
+function App:post(path, callback) self:set_route('POST', path, callback) end
+function App:put(path, callback) self:set_route('PUT', path, callback) end
+function App:unlink(path, callback) self:set_route('UNLINK', path, callback) end
 
 function compile_pattern(pattern)
   local keys = {}
@@ -73,11 +78,13 @@ function process_request(app)
 end
 
 function App:run()
-  local ok, status = pcall(process_request, self)
-  if getmetatable(status) == Response then
-    status:send()
+  local ok, response = pcall(process_request, self)
+  if getmetatable(response) == Response then
+    response:send()
+    return response
   else
-    log(tostring(status))
+    log(tostring(response))
+    return response
   end
 end
 
