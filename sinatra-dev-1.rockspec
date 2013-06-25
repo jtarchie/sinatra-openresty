@@ -1,7 +1,7 @@
 package = "sinatra"
 version = "dev-1"
 source = {
-  url = "git://github.com/jtarchie/underscore-openresty.git"
+  url = "git://github.com/jtarchie/sinatra-openresty.git"
 }
 description = {
   summary = "Sinatra port for OpenResty",
@@ -17,9 +17,9 @@ dependencies = {
 build = {
   type = "builtin",
   modules = {
-    "sinatra" = "lib/sinatra.lua",
-    "sinatra.app" = "lib/sinatra/app.lua",
-    "sinatra.request" = "lib/sinatra/request.lua",
-    "sinatra.response" = "lib/sinatra/response.lua"
+    ["sinatra"] = "lib/sinatra.lua",
+    ["sinatra.app"] = "lib/sinatra/app.lua",
+    ["sinatra.request"] = "lib/sinatra/request.lua",
+    ["sinatra.response"] = "lib/sinatra/response.lua"
   }
 }
