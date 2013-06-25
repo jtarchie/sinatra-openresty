@@ -54,4 +54,23 @@ describe("Routing within application", function()
     local response = get(app, "/")
     assert.same(response.status, 404)
   end)
+
+  -- it("allows using unicode", function()
+    -- local app = mock_app(function(app)
+      -- app:get("/föö", function() end)
+    -- end)
+
+    -- local response = get(app, "/f%C3%B6%C3%B6")
+    -- assert.same(response.status, 200)
+  -- end)
+
+  -- it("handles encoded slashes correctly", function()
+    -- local app = mock_app(function(app)
+      -- app:get("/:a", function(a) return a end)
+    -- end)
+
+    -- local response = get(app, "/foo%2Fbar")
+    -- assert.same(response.status, 200)
+    -- assert.same(response.body, "foo/bar")
+  -- end)
 end)

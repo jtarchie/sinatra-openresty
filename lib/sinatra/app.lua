@@ -1,5 +1,5 @@
 local table, _ = table, require("underscore")
-local App, Request, Response = {}, require("sinatra/request"), require("sinatra/response")
+local App, Request, Response, Pattern = {}, require("sinatra/request"), require("sinatra/response"), require("sinatra/pattern")
 
 App.__index = App
 
@@ -18,42 +18,29 @@ function App:new()
   return self
 end
 
-function App:delete(path, callback) self:set_route('DELETE', path, callback) end
-function App:get(path, callback) self:set_route('GET', path, callback) end
-function App:head(path, callback) self:set_route('HEAD', path, callback) end
-function App:link(path, callback) self:set_route('LINK', path, callback) end
-function App:options(path, callback) self:set_route('OPTIONS', path, callback) end
-function App:patch(path, callback) self:set_route('PATCH', path, callback) end
-function App:post(path, callback) self:set_route('POST', path, callback) end
-function App:put(path, callback) self:set_route('PUT', path, callback) end
-function App:unlink(path, callback) self:set_route('UNLINK', path, callback) end
-
-function compile_pattern(pattern)
-  local keys = {}
-  local compiled_pattern = pattern:gsub(":([%w]+)", function(match)
-    table.insert(keys, match)
-    return '([^/?#]+)'
-  end)
-  return({
-    original=pattern,
-    matcher='^' .. compiled_pattern .. '$',
-    matched_keys=keys
-  })
-end
+function App:delete(pattern, callback) self:set_route('DELETE', pattern, callback) end
+function App:get(pattern, callback) self:set_route('GET', pattern, callback) end
+function App:head(pattern, callback) self:set_route('HEAD', pattern, callback) end
+function App:link(pattern, callback) self:set_route('LINK', pattern, callback) end
+function App:options(pattern, callback) self:set_route('OPTIONS', pattern, callback) end
+function App:patch(pattern, callback) self:set_route('PATCH', pattern, callback) end
+function App:post(pattern, callback) self:set_route('POST', pattern, callback) end
+function App:put(pattern, callback) self:set_route('PUT', pattern, callback) end
+function App:unlink(pattern, callback) self:set_route('UNLINK', pattern, callback) end
 
 function App:set_route(method, pattern, callback)
   self.routes[method] = self.routes[method] or {}
   table.insert(self.routes[method], {
     method=method,
-    pattern=compile_pattern(pattern),
+    pattern=Pattern:new(pattern),
     callback=callback
   })
 end
 
 function process_route(request, route)
-  local matches = { string.match(request.current_path, route.pattern.matcher) }
+  local matches = { route.pattern:match(request.current_path) }
   if #matches > 0 then
-    local matched_keys = _.object(route.pattern.matched_keys, matches)
+    local matched_keys = _.object(route.pattern.keys, matches)
     local route_env = setmetatable({
       request=request,
       params=_.extend(request:params(), matched_keys)
