@@ -62,6 +62,8 @@ describe("Routing within application", function()
 
      local response = get(app, "/f%C3%B6%C3%B6")
      assert.same(response.status, 200)
+     local response = get(app, "/f%c3%b6%c3%b6")
+     assert.same(response.status, 200)
    end)
 
    it("handles encoded slashes correctly", function()
@@ -70,6 +72,10 @@ describe("Routing within application", function()
      end)
 
      local response = get(app, "/foo%2Fbar")
+     assert.same(response.status, 200)
+     assert.same(response.body, "foo/bar")
+     
+     local response = get(app, "/foo%2fbar")
      assert.same(response.status, 200)
      assert.same(response.body, "foo/bar")
    end)

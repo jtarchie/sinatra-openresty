@@ -5,7 +5,9 @@ Pattern.__index = Pattern
 function compile_pattern(pattern)
   local keys = {}
   local compiled_pattern = pattern:gsub("[^%w%?\\/:*]", function(c)
-    return Utils.escape(c):gsub('%%','%%%%')
+    return Utils.escape(c):gsub('%%(%x)(%x)', function(a,b)
+      return '%%[' .. a:upper() .. a:lower() .. '][' .. b:upper() .. b:lower() .. ']'
+    end)
   end):gsub(":([%w]+)", function(match)
     table.insert(keys, match)
     return '([^/?#]+)'
