@@ -1,10 +1,12 @@
 local table = table
-local Pattern = {}
+local Pattern, Utils = {}, require("sinatra/utils")
 Pattern.__index = Pattern
 
 function compile_pattern(pattern)
   local keys = {}
-  local compiled_pattern = pattern:gsub(":([%w]+)", function(match)
+  local compiled_pattern = pattern:gsub("[^%w%?\\/:*]", function(c)
+    return Utils.escape(c):gsub('%%','%%%%')
+  end):gsub(":([%w]+)", function(match)
     table.insert(keys, match)
     return '([^/?#]+)'
   end)

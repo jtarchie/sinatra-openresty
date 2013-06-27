@@ -1,5 +1,6 @@
 local table, _ = table, require("underscore")
-local App, Request, Response, Pattern = {}, require("sinatra/request"), require("sinatra/response"), require("sinatra/pattern")
+local App, Request, Response, Pattern, Utils =
+  {}, require("sinatra/request"), require("sinatra/response"), require("sinatra/pattern"), require("sinatra/utils")
 
 App.__index = App
 
@@ -40,7 +41,11 @@ end
 function process_route(request, route)
   local matches = { route.pattern:match(request.current_path) }
   if #matches > 0 then
-    local matched_keys = _.object(route.pattern.keys, matches)
+    matches = _.map(matches, Utils.unescape)
+    local matched_keys = _.object(
+      route.pattern.keys,
+      matches
+    )
     local route_env = setmetatable({
       request=request,
       params=_.extend(request:params(), matched_keys)

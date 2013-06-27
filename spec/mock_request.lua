@@ -15,7 +15,7 @@ function MockRequest:request(verb, request_path, headers)
     },
     req={
       get_method=function() return verb end,
-      get_uri_args=function() end
+      get_uri_args=function() return {} end
     },
     say=function() end
   }
