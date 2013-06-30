@@ -42,13 +42,18 @@ function process_route(request, route)
   local matches = { route.pattern:match(request.current_path) }
   if #matches > 0 then
     matches = _.map(matches, Utils.unescape)
-    local matched_keys = _.object(
-      route.pattern.keys,
-      matches
-    )
+    local params = _.extend(request:params(), {splat={},captues=matches})
+    _.each(_.zip(route.pattern.keys, matches), function(matched)
+      local key, value = matched[1], matched[2]
+      if _.isArray(params[key]) then
+        table.insert(params[key], value)
+      else
+        params[key] = value
+      end
+    end)
     local route_env = setmetatable({
       request=request,
-      params=_.extend(request:params(), matched_keys)
+      params=params
     }, { __index = _G})
     local callback = setfenv(route.callback, route_env)
     halt(callback(unpack(matches)))

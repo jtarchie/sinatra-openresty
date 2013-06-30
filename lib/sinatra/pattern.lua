@@ -11,6 +11,9 @@ function compile_pattern(pattern)
   end):gsub(":([%w]+)", function(match)
     table.insert(keys, match)
     return '([^/?#]+)'
+  end):gsub("%*", function(match)
+    table.insert(keys, "splat")
+    return "(.-)"
   end)
   return({
     original=pattern,
