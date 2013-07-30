@@ -61,10 +61,11 @@ function App:process_route(route)
       return function(...) return self[key](self, ...) end
     end
     local context = setmetatable({
+      self=self,
       request=request,
       response=response,
       params=params
-    }, { __index = contextDSL})
+    }, { __index = _G})
     local callback = setfenv(route.callback, context)
     halt(callback(unpack(matches)) or self.response)
   end

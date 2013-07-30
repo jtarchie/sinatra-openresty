@@ -22,7 +22,7 @@ describe("helper DSL functions", function()
       block = block or function() end
       local app = mock_app(function(app)
         app:get("/", function()
-          status(code)
+          self:status(code)
           return block()
         end)
       end)
