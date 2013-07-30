@@ -4,6 +4,8 @@ local App, Request, Response, Pattern, Utils =
 
 App.__index = App
 
+local NotFound = Response:new(404)
+
 function log(...)
   ngx.log(ngx.ERR, "SINATRA: ", ...)
 end
@@ -82,7 +84,7 @@ function App:dispatch()
     self:process_route(route)
   end
 
-  halt(404)
+  halt(NotFound)
 end
 
 function App:invoke(callback)
