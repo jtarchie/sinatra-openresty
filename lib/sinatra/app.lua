@@ -13,10 +13,10 @@ function halt(...)
 end
 
 function App:new()
-  local self = setmetatable({
+  local instance = setmetatable({
     routes={}
   }, self)
-  return self
+  return instance
 end
 
 function App:delete(pattern, callback) self:set_route('DELETE', pattern, callback) end
@@ -38,7 +38,8 @@ function App:set_route(method, pattern, callback)
   })
 end
 
-function process_route(request, route)
+function App:process_route(route)
+  local request = self.request
   local matches = { route.pattern:match(request.current_path) }
   if #matches > 0 then
     matches = _.map(matches, Utils.unescape)
@@ -51,38 +52,53 @@ function process_route(request, route)
         params[key] = value
       end
     end)
-    local route_env = setmetatable({
+    local contextDSL = function(table, key)
+      return function(...) return self[key](self, ...) end
+    end
+    local context = setmetatable({
       request=request,
+      response=response,
       params=params
-    }, { __index = _G})
-    local callback = setfenv(route.callback, route_env)
-    halt(callback(unpack(matches)))
+    }, { __index = contextDSL})
+    local callback = setfenv(route.callback, context)
+    halt(callback(unpack(matches)) or self.response)
   end
 end
 
-function App:apply_routes(request)
-  local routes = self.routes[request.request_method]
+function App:status(code)
+  if code then
+    self.response.status = code
+  end
+
+  return self.response.status
+end
+
+function App:dispatch()
+  local routes = self.routes[self.request.request_method]
   for index, route in ipairs(routes) do
-    process_route(request, route)
+    self:process_route(route)
   end
 
   halt(404)
 end
 
-function process_request(app)
-  local request = Request:new()
-  app:apply_routes(request)
+function App:invoke(callback)
+  local ok, response = pcall(callback, self)
+
+  if getmetatable(response) == Response then
+    self.response = response
+  else
+    log(tostring(response))
+  end
 end
 
 function App:run()
-  local ok, response = pcall(process_request, self)
-  if getmetatable(response) == Response then
-    response:send()
-    return response
-  else
-    log(tostring(response))
-    return response
-  end
+  self.request = Request:new()
+  self.response = Response:new()
+
+  self:invoke(self.dispatch)
+  self.response:finish()
+  return self.response
 end
 
 return App

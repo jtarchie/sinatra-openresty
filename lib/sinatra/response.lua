@@ -6,25 +6,25 @@ Response.__tostring = function(self)
   return "Response"
 end
 
-function parse_arguments(...)
-  local args = {...}
-  if #args == 3 then
-    return args[1], args[2], args[3]
-  elseif #args == 2 then
-    return args[1], {}, args[2]
-  elseif #args == 1 then
-    if type(args[1]) == "number" then
-      return args[1], {}, " "
-    else
-      return 200, {}, args[1]
-    end
+function parse_arguments(args)
+  if _.isString(args) then
+    return 200, {}, args
+  elseif _.isNumber(args) then
+    return args, {}, " "
+  elseif _.isArray(args) and _.isNumber(args[1]) then
+    local status, body, headers = _.shift(args), _.pop(args), unpack(args)
+    return status, headers or {}, body
   else
     return 200, {}, " "
   end
 end
 
-function Response:new(...)
-  local status, headers, body = parse_arguments(...)
+function Response:new(args)
+  if tostring(args) == "Response" then
+    return args
+  end
+
+  local status, headers, body = parse_arguments(args)
   if(ngx.req.get_method() == "HEAD") then
     body = ""
   end
@@ -35,7 +35,7 @@ function Response:new(...)
   }, self)
 end
 
-function Response:send()
+function Response:finish()
   ngx.status = self.status
   for name, value in pairs(self.headers) do
     ngx.header[name] = value
