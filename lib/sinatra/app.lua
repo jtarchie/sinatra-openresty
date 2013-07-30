@@ -20,7 +20,10 @@ function App:new()
 end
 
 function App:delete(pattern, callback) self:set_route('DELETE', pattern, callback) end
-function App:get(pattern, callback) self:set_route('GET', pattern, callback) end
+function App:get(pattern, callback)
+  self:set_route('GET', pattern, callback)
+  self:head(pattern, callback)
+end
 function App:head(pattern, callback) self:set_route('HEAD', pattern, callback) end
 function App:link(pattern, callback) self:set_route('LINK', pattern, callback) end
 function App:options(pattern, callback) self:set_route('OPTIONS', pattern, callback) end

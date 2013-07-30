@@ -46,6 +46,19 @@ describe("Routing within application", function()
     assert.same(response.body, "")
   end)
 
+  it("defines HEAD method for every GET method", function()
+    local app = mock_app(function(app)
+      app:get("/hello", function()
+        return 'remove me'
+      end)
+    end)
+
+    local request = MockRequest:new(app)
+    local response = request:request("HEAD", "/hello", {})
+    assert.same(response.status, 200)
+    assert.same(response.body, "")
+  end)
+
   it("404s when no route satisfies the request", function()
     local app = mock_app(function(app)
       app:get("/foo", function() end)
