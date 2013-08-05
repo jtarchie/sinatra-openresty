@@ -69,7 +69,27 @@ function App:process_route(route)
 end
 
 function App:is_not_found()
-  return self.response.status == 404
+  return self:status() == 404
+end
+
+function App:is_informational()
+  return 100 <= self:status() and self:status() < 200
+end
+
+function App:is_success()
+  return 200 <= self:status() and self:status() < 300
+end
+
+function App:is_redirect()
+  return 300 <= self:status() and self:status() < 400
+end
+
+function App:is_client_error()
+  return 400 <= self:status() and self:status() < 500
+end
+
+function App:is_server_error()
+  return self:status() >= 500
 end
 
 function App:status(code)
