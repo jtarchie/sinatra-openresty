@@ -17,21 +17,26 @@ function get(app, current_path)
 end
 
 describe("helper DSL functions", function()
-  describe("status", function()
-    function status_app(code, block)
-      block = block or function() end
-      local app = mock_app(function(app)
-        app:get("/", function()
-          self:status(code)
-          return block()
-        end)
+  function status_app(code, block)
+    block = block or function() return "" end
+    local app = mock_app(function(app)
+      app:get("/", function()
+        self:status(code)
+        return tostring(block(self))
       end)
-      return get(app, "/")
-    end
-
+    end)
+    return get(app, "/")
+  end
+  describe("#status", function()
     it("sets the response status code", function()
       local response = status_app(207)
       assert.same(response.status, 207)
+    end)
+  end)
+  describe("#not_found", function()
+    it("is true for status == 404", function()
+      local response = status_app(404, function(self) return self:is_not_found() end)
+      assert.same(response.body, 'true')
     end)
   end)
 end)

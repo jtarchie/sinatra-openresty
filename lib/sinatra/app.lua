@@ -4,14 +4,14 @@ local App, Request, Response, Pattern, Utils =
 
 App.__index = App
 
-local NotFound = Response:new(404)
+local NotFound = Response:new({404})
 
 function log(...)
   ngx.log(ngx.ERR, "SINATRA: ", ...)
 end
 
 function halt(...)
-  error(Response:new(...))
+  coroutine.yield(...)
 end
 
 function App:new()
@@ -57,9 +57,6 @@ function App:process_route(route)
         params[key] = value
       end
     end)
-    local contextDSL = function(table, key)
-      return function(...) return self[key](self, ...) end
-    end
     local context = setmetatable({
       self=self,
       request=request,
@@ -67,15 +64,18 @@ function App:process_route(route)
       params=params
     }, { __index = _G})
     local callback = setfenv(route.callback, context)
-    halt(callback(unpack(matches)) or self.response)
+    halt(callback(unpack(matches)))
   end
+end
+
+function App:is_not_found()
+  return self.response.status == 404
 end
 
 function App:status(code)
   if code then
     self.response.status = code
   end
-
   return self.response.status
 end
 
@@ -89,12 +89,11 @@ function App:dispatch()
 end
 
 function App:invoke(callback)
-  local ok, response = pcall(callback, self)
-
+  local ok, response = coroutine.resume(coroutine.create(callback), self)
   if getmetatable(response) == Response then
     self.response = response
-  else
-    log(tostring(response))
+  elseif response then
+    self.response:update(response)
   end
 end
 
