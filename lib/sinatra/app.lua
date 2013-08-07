@@ -1,8 +1,10 @@
+local class = require "30log"
 local table, _ = table, require("underscore")
-local App, Request, Response, Pattern, Utils =
-  {}, require("sinatra/request"), require("sinatra/response"), require("sinatra/pattern"), require("sinatra/utils")
-
-App.__index = App
+local App = class {}
+local Request = require("sinatra/request")
+local Response = require("sinatra/response")
+local Pattern = require("sinatra/pattern")
+local Utils = require("sinatra/utils")
 
 local NotFound = Response:new({404})
 
@@ -14,11 +16,8 @@ function halt(...)
   coroutine.yield(...)
 end
 
-function App:new()
-  local instance = setmetatable({
-    routes={}
-  }, self)
-  return instance
+function App:__init()
+  self.routes={}
 end
 
 function App:delete(pattern, callback) self:set_route('DELETE', pattern, callback) end

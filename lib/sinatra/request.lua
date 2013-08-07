@@ -1,11 +1,10 @@
-local Request = {}
-Request.__index = Request
+local class = require '30log'
+local Request = class {}
+Request.__name = "Request"
 
-function Request:new()
-  return setmetatable({
-    request_method=ngx.req.get_method(),
-    current_path=ngx.var.uri
-  }, self)
+function Request:__init()
+  self.request_method=ngx.req.get_method()
+  self.current_path=ngx.var.uri
 end
 
 function Request:params()
