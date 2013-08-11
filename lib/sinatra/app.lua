@@ -5,6 +5,7 @@ local Request = require("sinatra/request")
 local Response = require("sinatra/response")
 local Pattern = require("sinatra/pattern")
 local Utils = require("sinatra/utils")
+local Helper = require("sinatra/app/helper")
 
 local NotFound = Response:new({404})
 
@@ -18,6 +19,7 @@ end
 
 function App:__init()
   self.routes={}
+  self.filters={['before']={},['after']={}}
 end
 
 function App:delete(pattern, callback) self:set_route('DELETE', pattern, callback) end
@@ -33,16 +35,20 @@ function App:post(pattern, callback) self:set_route('POST', pattern, callback) e
 function App:put(pattern, callback) self:set_route('PUT', pattern, callback) end
 function App:unlink(pattern, callback) self:set_route('UNLINK', pattern, callback) end
 
-function App:set_route(method, pattern, callback)
-  self.routes[method] = self.routes[method] or {}
-  table.insert(self.routes[method], {
+function compile(method, pattern, callback)
+  return {
     method=method,
     pattern=Pattern:new(pattern),
     callback=callback
-  })
+  }
 end
 
-function App:process_route(route)
+function App:set_route(method, pattern, callback)
+  self.routes[method] = self.routes[method] or {}
+  table.insert(self.routes[method], compile(method, pattern, callback))
+end
+
+function App:process_route(route, block)
   local request = self.request
   local matches = { route.pattern:match(request.current_path) }
   if #matches > 0 then
@@ -58,53 +64,48 @@ function App:process_route(route)
     end)
     local context = setmetatable({
       self=self,
-      request=request,
-      response=response,
+      request=self.request,
+      response=self.response,
       params=params
     }, { __index = _G})
     local callback = setfenv(route.callback, context)
-    halt(callback(unpack(matches)))
+    block = block or function() end
+    block(callback(unpack(matches)))
   end
 end
 
-function App:is_not_found()
-  return self:status() == 404
-end
+function App:after(...) self:add_filter('after', ...) end
+function App:before(...) self:add_filter('before', ...) end
 
-function App:is_informational()
-  return 100 <= self:status() and self:status() < 200
-end
-
-function App:is_success()
-  return 200 <= self:status() and self:status() < 300
-end
-
-function App:is_redirect()
-  return 300 <= self:status() and self:status() < 400
-end
-
-function App:is_client_error()
-  return 400 <= self:status() and self:status() < 500
-end
-
-function App:is_server_error()
-  return self:status() >= 500
-end
-
-function App:status(code)
-  if code then
-    self.response.status = code
+function App:add_filter(filter_type, pattern, callback)
+  if(_.isFunction(pattern)) then
+    callback, pattern = pattern, '*'
   end
-  return self.response.status
+
+  self.filters[filter_type] = self.filters[filter_type] or {}
+  table.insert(self.filters[filter_type], compile(filter_type, pattern, callback))
+end
+
+function App:process_filters(filter_type)
+  local filters = self.filters[filter_type]
+  for index, route in ipairs(filters) do
+    self:process_route(route)
+  end
+end
+
+function App:process_routes()
+  self:process_filters('before')
+
+  local routes = self.routes[self.request.request_method]
+  for index, route in ipairs(routes) do
+    self:process_route(route, halt)
+  end
+  halt(NotFound)
 end
 
 function App:dispatch()
-  local routes = self.routes[self.request.request_method]
-  for index, route in ipairs(routes) do
-    self:process_route(route)
-  end
-
-  halt(NotFound)
+  self:invoke(self.process_routes)
+  self:process_filters('after')
 end
 
 function App:invoke(callback)
@@ -114,6 +115,7 @@ function App:invoke(callback)
   elseif response then
     self.response:update(response)
   end
+  return ok
 end
 
 function App:run()
@@ -124,5 +126,7 @@ function App:run()
   self.response:finish()
   return self.response
 end
+
+App:with(Helper)
 
 return App

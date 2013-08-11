@@ -5,17 +5,6 @@ local _ = require("underscore")
 local App = require("sinatra/app")
 local MockRequest = require("mock_request")
 
-function mock_app(declared)
-  local app = App:new()
-  declared(app)
-  return app
-end
-
-function get(app, current_path)
-  local request = MockRequest:new(app)
-  return request:request("GET", current_path, {})
-end
-
 describe("Routing within application", function()
   local methods = {"get", "put", "post", "delete", "options", "patch", "link", "unlink"}
   _.each(methods, function(method)
@@ -64,7 +53,7 @@ describe("Routing within application", function()
       app:get("/foo", function() end)
     end)
 
-    local response = get(app, "/")
+    local response = get("/")
     assert.same(response.status, 404)
   end)
 
@@ -73,9 +62,9 @@ describe("Routing within application", function()
       app:get("/föö", function() end)
     end)
 
-    local response = get(app, "/f%C3%B6%C3%B6")
+    local response = get( "/f%C3%B6%C3%B6")
     assert.same(response.status, 200)
-    local response = get(app, "/f%c3%b6%c3%b6")
+    local response = get( "/f%c3%b6%c3%b6")
     assert.same(response.status, 200)
   end)
 
@@ -84,11 +73,11 @@ describe("Routing within application", function()
       app:get("/:a", function(a) return a end)
     end)
 
-    local response = get(app, "/foo%2Fbar")
+    local response = get( "/foo%2Fbar")
     assert.same(response.status, 200)
     assert.same(response.body, "foo/bar")
 
-    local response = get(app, "/foo%2fbar")
+    local response = get( "/foo%2fbar")
     assert.same(response.status, 200)
     assert.same(response.body, "foo/bar")
   end)
@@ -100,11 +89,11 @@ describe("Routing within application", function()
       end)
     end)
 
-    local response = get(app, "/foo")
+    local response = get( "/foo")
     assert.same(response.status, 200)
     assert.same(response.body, "foo")
 
-    local response = get(app, "/foo/bar/baz")
+    local response = get( "/foo/bar/baz")
     assert.same(response.status, 200)
     assert.same(response.body, "foo/bar/baz")
   end)
@@ -116,11 +105,11 @@ describe("Routing within application", function()
       end)
     end)
 
-    local response = get(app, "/bar/foo/bling/baz/boom")
+    local response = get( "/bar/foo/bling/baz/boom")
     assert.same(response.status, 200)
     assert.same(response.body, "bar,bling,baz/boom")
 
-    local response = get(app, "/bar/foo/baz")
+    local response = get( "/bar/foo/baz")
     assert.same(response.status, 404)
   end)
 
@@ -131,7 +120,7 @@ describe("Routing within application", function()
       end)
     end)
 
-    local response = get(app, "/foo/bar/baz")
+    local response = get( "/foo/bar/baz")
     assert.same(response.status, 200)
     assert.same(response.body, "foo,bar/baz")
   end)
@@ -143,7 +132,7 @@ describe("Routing within application", function()
       end)
     end)
 
-    local response = get(app, "/hello%20world/how%20are%20you")
+    local response = get( "/hello%20world/how%20are%20you")
     assert.same(response.status, 200)
     assert.same(response.body, "hello world,how are you")
   end)
@@ -155,7 +144,7 @@ describe("Routing within application", function()
       end)
     end)
 
-    local response = get(app, "/bar/foo/bling/baz/boom")
+    local response = get( "/bar/foo/bling/baz/boom")
     assert.same(response.status, 200)
     assert.same(response.body, "bar,bling,baz/boom")
   end)

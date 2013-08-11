@@ -42,7 +42,13 @@ function Response:finish()
   for name, value in pairs(self.headers) do
     ngx.header[name] = value
   end
-  ngx.say(self.body)
+  if(_.isString(self.body)) then
+    ngx.say(self.body)
+  else
+    for str in self.body do
+      ngx.say(str)
+    end
+  end
 end
 
 return Response
