@@ -4,7 +4,7 @@ local table = table
 local Response = class {}
 Response.__name = "Response"
 
-function parse_arguments(args)
+local function parse_arguments(args)
   if _.isString(args) then
     return nil, nil, args
   elseif _.isNumber(args) then

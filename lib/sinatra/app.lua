@@ -9,11 +9,11 @@ local Helper = require("sinatra/app/helper")
 
 local NotFound = Response:new({404})
 
-function log(...)
+local function log(...)
   ngx.log(ngx.ERR, "SINATRA: ", ...)
 end
 
-function halt(...)
+local function halt(...)
   coroutine.yield(...)
 end
 
@@ -35,7 +35,7 @@ function App:post(pattern, callback) self:set_route('POST', pattern, callback) e
 function App:put(pattern, callback) self:set_route('PUT', pattern, callback) end
 function App:unlink(pattern, callback) self:set_route('UNLINK', pattern, callback) end
 
-function compile(method, pattern, callback)
+local function compile(method, pattern, callback)
   return {
     method=method,
     pattern=Pattern:new(pattern),
