@@ -148,4 +148,47 @@ describe("Routing within application", function()
     assert.same(response.status, 200)
     assert.same(response.body, "bar,bling,baz/boom")
   end)
+
+
+  describe("with a matched response", function()
+    it("returns response immediatly on halt", function()
+      mock_app(function(app)
+        app:get('/', function()
+          self:halt('Hello World')
+          return "Goodbye"
+        end)
+      end)
+
+      local response = get("/")
+      assert.same(200, response.status)
+      assert.same("Hello World", response.body)
+    end)
+
+    it("halts with a response tuple", function()
+      mock_app(function(app)
+        app:get("/", function()
+          self:halt({295, {['Content-Type']='text/plain'}, 'Hello World'})
+        end)
+      end)
+
+      local response = get("/")
+      assert.same(295, response.status)
+      assert.same('text/plain', response.headers['Content-Type'])
+      assert.same('Hello World', response.body)
+    end)
+
+    it("sets the response.status with on a halt", function()
+      local status = nil
+      mock_app(function(app)
+        app:get("/", function()
+          self:halt(500)
+        end)
+        app:after(function() status = self.response.status end)
+      end)
+
+      local response = get("/")
+      assert.same(500, status)
+      assert.same(500, response.status)
+    end)
+  end)
 end)
