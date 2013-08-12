@@ -13,7 +13,7 @@ local function log(...)
   ngx.log(ngx.ERR, "SINATRA: ", ...)
 end
 
-local function halt(...)
+function App:halt(...)
   coroutine.yield(...)
 end
 
@@ -70,7 +70,7 @@ function App:process_route(route, block)
     }, { __index = _G})
     local callback = setfenv(route.callback, context)
     block = block or function() end
-    block(callback(unpack(matches)))
+    block(self, callback(unpack(matches)))
   end
 end
 
@@ -98,9 +98,9 @@ function App:process_routes()
 
   local routes = self.routes[self.request.request_method]
   for index, route in ipairs(routes) do
-    self:process_route(route, halt)
+    self:process_route(route, self.halt)
   end
-  halt(NotFound)
+  self:halt(NotFound)
 end
 
 function App:dispatch()
