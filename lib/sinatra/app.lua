@@ -1,21 +1,43 @@
 local class = require "30log"
 local table, _ = table, require("underscore")
-local App = class {}
 local Request = require("sinatra/request")
 local Response = require("sinatra/response")
 local Pattern = require("sinatra/pattern")
 local Utils = require("sinatra/utils")
 local Helper = require("sinatra/app/helper")
 
-local NotFound = Response:new({404})
+local App = class {}
+local noop = function() end
+
+-- default responses
+local NotFound = 404
 
 local function log(...)
   ngx.log(ngx.ERR, "SINATRA: ", ...)
 end
 
-function App:halt(...)
-  coroutine.yield(...)
+local function catch(thrown_value, callback, ...)
+  local ok, value = pcall(callback, ...)
+  if not ok then
+    if getmetatable(value) ~= thrown_value then
+      error(value)
+    else
+      return(value.args)
+    end
+  end
 end
+
+local function throw(thrown_value, ...)
+  local instance = thrown_value:new()
+  instance.args = ...
+  error(instance)
+end
+
+local Halt, Pass = class {}, class {}
+Halt.__name = "Halt"
+Pass.__name = "Pass"
+function App:pass(...) throw(Pass, ...) end
+function App:halt(...) throw(Halt, ...) end
 
 function App:__init()
   self.routes={}
@@ -53,7 +75,7 @@ function App:process_route(route, block)
   local matches = { route.pattern:match(request.current_path) }
   if #matches > 0 then
     matches = _.map(matches, Utils.unescape)
-    local params = _.extend(request:params(), {splat={},captues=matches})
+    local params = _.extend({},request:params(), {splat={},captues=matches})
     _.each(_.zip(route.pattern.keys, matches), function(matched)
       local key, value = matched[1], matched[2]
       if _.isArray(params[key]) then
@@ -69,8 +91,7 @@ function App:process_route(route, block)
       params=params
     }, { __index = _G})
     local callback = setfenv(route.callback, context)
-    block = block or function() end
-    block(self, callback(unpack(matches)))
+    catch(Pass, block, self, callback(unpack(matches)))
   end
 end
 
@@ -89,7 +110,7 @@ end
 function App:process_filters(filter_type)
   local filters = self.filters[filter_type]
   for index, route in ipairs(filters) do
-    self:process_route(route)
+    self:process_route(route, noop)
   end
 end
 
@@ -98,7 +119,7 @@ function App:process_routes()
 
   local routes = self.routes[self.request.request_method]
   for index, route in ipairs(routes) do
-    self:process_route(route, self.halt)
+    catch(Pass, self.process_route, self, route, self.halt)
   end
   self:halt(NotFound)
 end
@@ -109,13 +130,8 @@ function App:dispatch()
 end
 
 function App:invoke(callback)
-  local ok, response = coroutine.resume(coroutine.create(callback), self)
-  if getmetatable(response) == Response then
-    self.response = response
-  elseif response then
-    self.response:update(response)
-  end
-  return ok
+  local response = catch(Halt, callback, self)
+  self.response:update(response)
 end
 
 function App:run()

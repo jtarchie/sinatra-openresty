@@ -110,6 +110,7 @@ describe("Routing within application", function()
     assert.same(response.body, "bar,bling,baz/boom")
 
     local response = get("/bar/foo/baz")
+    assert.same(response.body, " ")
     assert.same(response.status, 404)
   end)
 
@@ -189,6 +190,24 @@ describe("Routing within application", function()
       local response = get("/")
       assert.same(500, status)
       assert.same(500, response.status)
+    end)
+
+    it("transitions to the net matching route on pass", function()
+      mock_app(function(app)
+        app:get("/:foo", function()
+          self:pass()
+          return "Hello Foo"
+        end)
+
+        app:get("/*", function()
+          assert.same(nil, params['foo'])
+          return "Hello World"
+        end)
+      end)
+
+      local response = get "/bar"
+      assert.same(200, response.status)
+      assert.same("Hello World", response.body)
     end)
   end)
 end)
