@@ -12,7 +12,7 @@ Assuming that you already have OpenResty installed and available via
 PATH.
 
 ```sh
-bundle
-pkill nginx; nginx -p `pwd`/examples/ -c nginx.conf; bundle exec rspec spec/
-busted -p spec.lua
+luarocks install busted luasocket
+luarocks install sinatra-dev-1.rockspec
+busted 
 ```
