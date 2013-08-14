@@ -11,7 +11,11 @@ app:get("/:name", function()
 end)
 
 app:get("/age/:age", function(age)
-  return "You are " .. tostring(age) .. " years old."
+  if (params.name) then
+    return params.name .. " are " .. tostring(age) .. " years old."
+  else
+    return "You are " .. tostring(age) .. " years old."
+  end
 end)
 
 app:run()
