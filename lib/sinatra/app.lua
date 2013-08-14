@@ -91,7 +91,7 @@ function App:process_route(route, block)
       params=params
     }, { __index = _G})
     local callback = setfenv(route.callback, context)
-    catch(Pass, block, self, callback(unpack(matches)))
+    return catch(Pass, block, self, callback(unpack(matches)))
   end
 end
 
@@ -115,12 +115,14 @@ function App:process_filters(filter_type)
 end
 
 function App:process_routes()
+  local pass_block
   self:process_filters('before')
 
   local routes = self.routes[self.request.request_method]
   for index, route in ipairs(routes) do
-    catch(Pass, self.process_route, self, route, self.halt)
+    pass_block = catch(Pass, self.process_route, self, route, self.halt)
   end
+  if pass_block then self:halt(pass_block()) end
   self:halt(NotFound)
 end
 

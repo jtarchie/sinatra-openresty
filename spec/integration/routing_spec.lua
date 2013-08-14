@@ -209,5 +209,32 @@ describe("Routing within application", function()
       assert.same(200, response.status)
       assert.same("Hello World", response.body)
     end)
+
+    it("transistions to 404 when passed and no subsequent route matches", function()
+      mock_app(function(app)
+        app:get('/:foo', function()
+          self:pass()
+          return 'Hello World'
+        end)
+      end)
+
+      local response=get("/bar")
+      assert.same(404, response.status)
+    end)
+
+    it("uses optional block passed to pass as route block if no other route is found", function()
+      mock_app(function(app)
+        app:get("/", function()
+          self:pass(function()
+            return "this"
+          end)
+          return "not this"
+        end)
+      end)
+
+      local response = get("/")
+      assert.same(200, response.status)
+      assert.same("this", response.body)
+    end)
   end)
 end)
