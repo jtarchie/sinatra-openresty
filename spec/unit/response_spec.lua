@@ -10,8 +10,8 @@ describe("Response", function()
       say=function()end,
       header={},
       status=nil,
-      req={
-        get_method=function() end
+      var={
+        request_method=nil
       }
     }
   end)

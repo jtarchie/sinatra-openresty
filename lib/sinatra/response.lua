@@ -19,7 +19,7 @@ end
 
 function Response:__init(args)
   local status, headers, body = parse_arguments(args)
-  if(ngx and ngx.req.get_method() == "HEAD") then
+  if(ngx and ngx.var.request_method == "HEAD") then
     body = ""
   end
   self.status = status or 200
@@ -29,7 +29,7 @@ end
 
 function Response:update(args)
   local status, headers, body = parse_arguments(args)
-  if(ngx and ngx.req.get_method() == "HEAD") then
+  if(ngx and ngx.var.request_method == "HEAD") then
     body = ""
   end
   self.status = status or self.status

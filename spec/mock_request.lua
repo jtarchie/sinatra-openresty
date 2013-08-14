@@ -26,11 +26,12 @@ function MockRequest:request(verb, request_path, headers)
     header={},
     log=function(...) print(...) end,
     var={
-      uri=path
+      uri=path,
+      request_method=verb
     },
     req={
-      get_method=function() return verb end,
-      get_uri_args=function() return params end
+      get_uri_args=function() return params end,
+      get_headers=function() return headers end
     },
     say=function(str) body = body .. str end
   }

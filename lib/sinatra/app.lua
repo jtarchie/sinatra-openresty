@@ -75,7 +75,7 @@ function App:process_route(route, block)
   local matches = { route.pattern:match(request.current_path) }
   if #matches > 0 then
     matches = _.map(matches, Utils.unescape)
-    local params = _.extend({},request:params(), {splat={},captues=matches})
+    local params = _.extend({},request.params, {splat={},captues=matches})
     _.each(_.zip(route.pattern.keys, matches), function(matched)
       local key, value = matched[1], matched[2]
       if _.isArray(params[key]) then
