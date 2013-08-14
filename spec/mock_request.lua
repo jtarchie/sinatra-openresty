@@ -33,7 +33,7 @@ function MockRequest:request(verb, request_path, headers)
       get_uri_args=function() return params end,
       get_headers=function() return headers end
     },
-    say=function(str) body = body .. str end
+    print=function(str) body = body .. str end
   }
   local response = self.app:run()
 

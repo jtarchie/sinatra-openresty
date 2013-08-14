@@ -7,7 +7,7 @@ ngx = {}
 describe("Response", function()
   before_each(function()
     ngx = {
-      say=function()end,
+      print=function()end,
       header={},
       status=nil,
       var={
@@ -25,7 +25,7 @@ describe("Response", function()
 
   describe("when finishing response back", function()
     it("outputs the body", function()
-      local say = spy.on(ngx, "say")
+      local say = spy.on(ngx, "print")
       local response = Response:new({200, "1234"})
       response:finish()
       assert.spy(say).was_called_with("1234")
@@ -48,7 +48,7 @@ describe("Response", function()
     local status = 500
     local headers = {["Content-Type"]="application/json"}
     local body = "body"
-    
+
     it("can be an array of three elements for status, headers, and body", function()
       local response = Response:new({status, headers, body})
       assert.same(response.status, status)

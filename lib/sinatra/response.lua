@@ -42,12 +42,12 @@ function Response:finish()
   for name, value in pairs(self.headers) do
     ngx.header[name] = value
   end
-  if(_.isString(self.body)) then
-    ngx.say(self.body)
-  else
+  if(_.isFunction(self.body)) then
     for str in self.body do
-      ngx.say(str)
+      ngx.print(str)
     end
+  else
+    ngx.print(self.body)
   end
 end
 
