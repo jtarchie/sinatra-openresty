@@ -44,4 +44,28 @@ function Helper:headers(hash)
   return self.response.headers
 end
 
+local with_charset = {"application/javascript", "application/xml", "application/xhtml+xml", "application/json", "^text"}
+function Helper:content_type(content_type, params)
+  params = params or {}
+  if not content_type:match('charset') and _.find(with_charset, function(value) return content_type:match(value) end) then
+    params['charset'] = params['charset'] or 'utf-8'
+  end
+
+  local mime_type = content_type
+  if not _.isEmpty(params) then
+    local separator = (mime_type:match(';') and ',') or ';'
+    mime_type = mime_type .. separator .. _(params).chain()
+    :map(function(value, key)
+      if value:match('[";,]') then
+        value = string.format("%q", value)
+      end
+      return _.join({key, value}, "=")
+    end)
+    :join(",")
+    :value()
+  end
+
+  self:headers({['Content-Type']=mime_type})
+end
+
 return Helper
