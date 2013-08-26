@@ -13,14 +13,20 @@ description = {
 dependencies = {
   "30log",
   "lua >= 5.1",
-  "underscore"
+  "underscore",
+  "cjson",
+  "busted",
+  "luasocket"
 }
 build = {
   type = "builtin",
   modules = {
     ["sinatra"] = "lib/sinatra.lua",
     ["sinatra.app"] = "lib/sinatra/app.lua",
+    ["sinatra.app.helper"] = "lib/sinatra/app/helper.lua",
+    ["sinatra.pattern"] = "lib/sinatra/pattern.lua",
     ["sinatra.request"] = "lib/sinatra/request.lua",
     ["sinatra.response"] = "lib/sinatra/response.lua"
+    ["sinatra.utils"] = "lib/sinatra/utils.lua"
   }
 }
