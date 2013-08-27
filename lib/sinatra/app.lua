@@ -42,6 +42,7 @@ function App:halt(...) throw(Halt, ...) end
 function App:__init()
   self.routes={}
   self.filters={['before']={},['after']={}}
+  self.environment='development'
 end
 
 function App:delete(pattern, callback) self:set_route('DELETE', pattern, callback) end
@@ -105,6 +106,18 @@ function App:add_filter(filter_type, pattern, callback)
 
   self.filters[filter_type] = self.filters[filter_type] or {}
   table.insert(self.filters[filter_type], compile(filter_type, pattern, callback))
+end
+
+function App:setting(key, value)
+  self[key] = value
+end
+
+function App:configure(...)
+  local envs, block = _.initial({...}), _.last({...})
+
+  if _.isEmpty(envs) or _.include(envs, self.environment) then
+    block()
+  end
 end
 
 function App:process_filters(filter_type)
