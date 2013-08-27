@@ -109,8 +109,14 @@ function App:add_filter(filter_type, pattern, callback)
 end
 
 function App:setting(key, value)
-  self[key] = value
+  if value ~= nil then
+    self[key] = value
+  end
+  return self[key]
 end
+
+function App:enable(key) self:setting(key, true) end
+function App:disable(key) self:setting(key, false) end
 
 function App:configure(...)
   local envs, block = _.initial({...}), _.last({...})
