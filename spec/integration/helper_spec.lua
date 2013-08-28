@@ -278,4 +278,23 @@ describe("helper DSL functions", function()
       end)
     end)
   end)
+
+  describe("#helpers", function()
+    it("takes a list of modules to mix into the app", function()
+      local HelperOne = {one=function() return '1' end}
+      local HelperTwo = {two=function() return '2' end}
+
+      mock_app(function(app)
+        app:helpers(HelperOne, HelperTwo)
+        app:get('/one', function() return self:one() end)
+        app:get('/two', function() return self:two() end)
+      end)
+
+      local response = get('/one')
+      assert.same('1', response.body)
+
+      local response = get('/two')
+      assert.same('2', response.body)
+    end)
+  end)
 end)

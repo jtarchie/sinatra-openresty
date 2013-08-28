@@ -66,6 +66,11 @@ function Helper:content_type(content_type, params)
   end
 
   self:headers({['Content-Type']=mime_type})
+  return mime_type
+end
+
+function Helper:helpers(...)
+  _.extend(self, ...)
 end
 
 return Helper
