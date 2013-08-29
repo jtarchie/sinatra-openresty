@@ -26,7 +26,7 @@ build = {
     ["sinatra.app.helper"] = "lib/sinatra/app/helper.lua",
     ["sinatra.pattern"] = "lib/sinatra/pattern.lua",
     ["sinatra.request"] = "lib/sinatra/request.lua",
-    ["sinatra.response"] = "lib/sinatra/response.lua"
+    ["sinatra.response"] = "lib/sinatra/response.lua",
     ["sinatra.utils"] = "lib/sinatra/utils.lua"
   }
 }
