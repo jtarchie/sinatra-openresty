@@ -14,7 +14,7 @@ dependencies = {
   "30log",
   "lua >= 5.1",
   "underscore",
-  "cjson",
+  "lua-cjson",
   "busted",
   "luasocket"
 }
