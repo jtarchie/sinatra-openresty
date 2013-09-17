@@ -1,6 +1,7 @@
 package.path = './spec/?.lua;./lib/?.lua;'..package.path
 require 'spec_helper'
 local _ =require("underscore")
+local json = require("cjson")
 
 describe("When testing against a live nginx process", function()
   before_each(function()
@@ -37,6 +38,14 @@ describe("When testing against a live nginx process", function()
       assert.same('{"name":"JT"}', response.body)
       assert.same(201, response.status)
       assert.same('application/json;charset=utf-8', response.headers['content-type'])
+    end)
+
+    it("returns the entire response object as json", function()
+      local response = visit("/request.json?name=JT")
+      local body = json.decode(response.body)
+      assert.same("localhost:3001", body.host_and_port)
+      assert.same("/request.json?name=JT", body.path)
+      assert.same("LuaSocket 2.0.2", body.user_agent)
     end)
   end)
 end)

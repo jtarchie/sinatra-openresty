@@ -27,7 +27,7 @@ describe("Filters that run before requests", function()
       app:get('/foo', function() return 'foo' end)
       app:get('/bar', function() return 'bar' end)
       app:before(function()
-        request.current_path='/bar'
+        request.path_info='/bar'
       end)
     end)
 

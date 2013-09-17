@@ -27,11 +27,16 @@ function MockRequest:request(verb, request_path, headers)
     log=function(...) print(...) end,
     var={
       uri=path,
-      request_method=verb
+      request_method=verb,
+      host="www.example.com",
+      server_port="80",
+      query_string=""
     },
     req={
       get_uri_args=function() return params end,
-      get_headers=function() return headers end
+      get_post_args=function() return {} end,
+      get_headers=function() return headers end,
+      read_body=function() end
     },
     print=function(str) body = body .. str end
   }

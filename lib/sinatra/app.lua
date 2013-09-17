@@ -73,7 +73,7 @@ end
 
 function App:process_route(route, block)
   local request = self.request
-  local matches = { route.pattern:match(request.current_path) }
+  local matches = { route.pattern:match(request.path_info) }
   if #matches > 0 then
     matches = _.map(matches, Utils.unescape)
     local params = _.extend({},request.params, {splat={},captues=matches})

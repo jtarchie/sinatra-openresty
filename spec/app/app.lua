@@ -7,6 +7,10 @@ app:get("/", function()
   return "Hello, World"
 end)
 
+app:get("/request.json", function()
+  return json.encode(request)
+end)
+
 app:get("/:name", function(name)
   if (request.headers['Accept'] == 'application/json') then
     self:status(201)
@@ -24,6 +28,7 @@ app:get("/age/:age", function(age)
     return "You are " .. tostring(age) .. " years old."
   end
 end)
+
 
 app:run()
 
