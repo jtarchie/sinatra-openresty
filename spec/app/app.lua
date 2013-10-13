@@ -8,7 +8,11 @@ app:get("/", function()
 end)
 
 app:get("/request.json", function()
-  return json.encode(request)
+  return json.encode({
+    host_and_port=request.host_and_port,
+    path=request.path,
+    user_agent=request.user_agent
+  })
 end)
 
 app:get("/:name", function(name)

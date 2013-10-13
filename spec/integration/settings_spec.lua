@@ -1,7 +1,7 @@
 package.path = './spec/?.lua;./lib/?.lua;'..package.path
 require("spec_helper")
 
-local _ = require("underscore")
+local _ = require("sinatra/underscore")
 
 describe("When defining settings", function()
   describe("#configure", function()

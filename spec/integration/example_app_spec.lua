@@ -1,6 +1,6 @@
 package.path = './spec/?.lua;./lib/?.lua;'..package.path
 require 'spec_helper'
-local _ =require("underscore")
+local _ =require("sinatra/underscore")
 local json = require("cjson")
 
 describe("When testing against a live nginx process", function()

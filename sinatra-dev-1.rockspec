@@ -12,7 +12,6 @@ description = {
 }
 dependencies = {
   "lua >= 5.1",
-  "underscore",
   "lua-cjson",
   "busted",
   "luasocket"
@@ -27,5 +26,7 @@ build = {
     ["sinatra.request"] = "lib/sinatra/request.lua",
     ["sinatra.response"] = "lib/sinatra/response.lua",
     ["sinatra.utils"] = "lib/sinatra/utils.lua"
+    ["sinatra.30log"] = "lib/sinatra/30log.lua",
+    ["sinatra.underscore"] = "lib/sinatra/underscore.lua"
   }
 }

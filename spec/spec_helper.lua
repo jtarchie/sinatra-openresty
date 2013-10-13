@@ -1,4 +1,4 @@
-local _ = require("underscore")
+local _ = require("sinatra/underscore")
 local App = require("sinatra/app")
 local MockRequest = require("mock_request")
 local http = require("socket.http")

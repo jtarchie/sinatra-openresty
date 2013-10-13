@@ -1,4 +1,4 @@
-local _ = require("underscore")
+local _ = require("sinatra/underscore")
 local MockRequest = {}
 local Utils = require("sinatra/utils")
 MockRequest.__index = MockRequest
