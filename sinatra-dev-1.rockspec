@@ -25,7 +25,7 @@ build = {
     ["sinatra.pattern"] = "lib/sinatra/pattern.lua",
     ["sinatra.request"] = "lib/sinatra/request.lua",
     ["sinatra.response"] = "lib/sinatra/response.lua",
-    ["sinatra.utils"] = "lib/sinatra/utils.lua"
+    ["sinatra.utils"] = "lib/sinatra/utils.lua",
     ["sinatra.30log"] = "lib/sinatra/30log.lua",
     ["sinatra.underscore"] = "lib/sinatra/underscore.lua"
   }
