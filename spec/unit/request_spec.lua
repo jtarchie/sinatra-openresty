@@ -2,7 +2,7 @@ package.path = './spec/?.lua;./lib/?.lua;'..package.path
 require("spec_helper")
 
 local Request = require("sinatra/request")
-local _ = require("sinatra/underscore")
+local _ = require("underscore")
 ngx = {}
 
 describe("Request", function()

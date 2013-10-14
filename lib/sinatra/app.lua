@@ -1,5 +1,5 @@
-local class = require "sinatra/30log"
-local table, _ = table, require("sinatra/underscore")
+local class = require "30log"
+local table, _ = table, require("underscore")
 local Request = require("sinatra/request")
 local Response = require("sinatra/response")
 local Pattern = require("sinatra/pattern")

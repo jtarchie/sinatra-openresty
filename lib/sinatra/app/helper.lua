@@ -1,4 +1,4 @@
-local _ = require("sinatra/underscore")
+local _ = require("underscore")
 local Helper = {}
 
 function Helper:is_not_found()

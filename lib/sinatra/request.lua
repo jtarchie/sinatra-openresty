@@ -1,5 +1,5 @@
-local class = require 'sinatra/30log'
-local _ = require("sinatra/underscore")
+local class = require '30log'
+local _ = require("underscore")
 local Request = class {}
 Request.__name = "Request"
 

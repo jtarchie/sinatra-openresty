@@ -1,7 +1,7 @@
 package.path = './spec/?.lua;./lib/?.lua;'..package.path
 require("spec_helper")
 
-local _ = require("sinatra/underscore")
+local _ = require("underscore")
 local App = require("sinatra/app")
 local MockRequest = require("mock_request")
 

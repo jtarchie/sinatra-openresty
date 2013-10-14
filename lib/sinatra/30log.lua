@@ -1,1 +1,0 @@
-/Users/jtarchie/workspace/lua/sinatra/vendor/30log/30log.lua

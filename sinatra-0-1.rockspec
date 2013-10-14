@@ -13,10 +13,6 @@ description = {
 dependencies = {
   "30log",
   "underscore",
-  "lua >= 5.1",
-  "lua-cjson",
-  "busted",
-  "luasocket"
 }
 build = {
   type = "builtin",
@@ -30,3 +26,4 @@ build = {
     ["sinatra.utils"] = "lib/sinatra/utils.lua",
   }
 }
+
