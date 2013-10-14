@@ -1,6 +1,0 @@
-[submodule "vendor/30log"]
-	path = vendor/30log
-	url = https://github.com/Yonaba/30log.git
-[submodule "vendor/underscore"]
-	path = vendor/underscore
-	url = https://github.com/jtarchie/underscore-lua.git

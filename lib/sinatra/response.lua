@@ -1,4 +1,4 @@
-local class = require '30log'
+local class = require 'sinatra/30log'
 local _ = require("underscore")
 local table = table
 local Response = class {}

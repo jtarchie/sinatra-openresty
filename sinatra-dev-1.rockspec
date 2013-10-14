@@ -11,7 +11,6 @@ description = {
   license = "MIT"
 }
 dependencies = {
-  "30log",
   "underscore",
   "lua >= 5.1",
   "lua-cjson",
@@ -28,5 +27,6 @@ build = {
     ["sinatra.request"] = "lib/sinatra/request.lua",
     ["sinatra.response"] = "lib/sinatra/response.lua",
     ["sinatra.utils"] = "lib/sinatra/utils.lua",
+    ["sinatra.30log"] = "lib/sinatra/30log.lua"
   }
 }
