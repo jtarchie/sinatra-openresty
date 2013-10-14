@@ -150,6 +150,17 @@ describe("Routing within application", function()
     assert.same(response.body, "bar,bling,baz/boom")
   end)
 
+  it("supports Lua magic characters for matching", function()
+    mock_app(function(app)
+      app:get("/foo%-:bar", function(bar)
+        return bar
+      end)
+    end)
+
+    local response = get("/foo-bar")
+    assert.same(response.status, 200)
+    assert.same(response.body, "bar")
+  end)
 
   describe("with a matched response", function()
     it("returns response immediatly on halt", function()

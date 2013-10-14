@@ -7,7 +7,7 @@ app:get("/", function()
   return "Hello, World"
 end)
 
-app:get("/request.json", function()
+app:get("/request%.json", function()
   return json.encode({
     host_and_port=request.host_and_port,
     path=request.path,
